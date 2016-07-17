@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import me.curzbin.library.BottomDialog;
 import me.curzbin.library.Item;
+import me.curzbin.library.OnItemClickListener;
 import me.curzbin.library.RxBus;
 import rx.functions.Action1;
 
@@ -40,6 +41,12 @@ public class MainActivity extends AppCompatActivity {
                         .title(R.string.share_title)
                         .inflateMenu(R.menu.menu_share)
                         .itemClick(rxBus)
+                        .itemClick(new OnItemClickListener() {
+                            @Override
+                            public void click(Item item) {
+                                Toast.makeText(MainActivity.this, getString(R.string.share_title) + item.getTitle(), Toast.LENGTH_LONG).show();
+                            }
+                        })
                         .show();
             }
         });

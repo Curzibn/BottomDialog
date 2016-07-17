@@ -64,6 +64,11 @@ public class BottomDialog {
         return this;
     }
 
+    public BottomDialog itemClick(OnItemClickListener listener) {
+        customDialog.setItemClick(listener);
+        return this;
+    }
+
     public void show() {
         customDialog.show();
     }
@@ -149,10 +154,15 @@ public class BottomDialog {
             adapter.setItemClick(rxBus);
         }
 
+        public void setItemClick(OnItemClickListener onItemClickListener) {
+            adapter.setItemClick(onItemClickListener);
+        }
+
         private class DialogAdapter extends RecyclerView.Adapter<DialogAdapter.ViewHolder> {
 
             private List<Item> mItems = Collections.emptyList();
             private RxBus rxBus;
+            private OnItemClickListener itemClickListener;
 
             public DialogAdapter(List<Item> mItems) {
                 setList(mItems);
@@ -164,6 +174,10 @@ public class BottomDialog {
 
             public void setItemClick(RxBus rxBus) {
                 this.rxBus = rxBus;
+            }
+
+            public void setItemClick(OnItemClickListener onItemClickListener) {
+                this.itemClickListener = onItemClickListener;
             }
 
             @Override
@@ -181,6 +195,7 @@ public class BottomDialog {
                     @Override
                     public void onClick(View view) {
                         if (rxBus.hasObservers()) rxBus.send(item);
+                        if (itemClickListener != null) itemClickListener.click(item);
                     }
                 });
             }
