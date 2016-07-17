@@ -1,0 +1,10 @@
+<resources>
+    <dimen name="app_normal_margin">10dp</dimen>
+    <dimen name="app_plus_margin">12dp</dimen>
+    <dimen name="app_tiny_margin">4dp</dimen>
+
+    <dimen name="font_huge">18sp</dimen>
+    <dimen name="font_larger">16sp</dimen>
+
+    <dimen name="bottom_dialog_top_icon">38dp</dimen>
+</resources>

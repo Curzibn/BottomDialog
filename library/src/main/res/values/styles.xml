@@ -1,0 +1,35 @@
+<resources>
+
+    <style name="Title">
+        <item name="android:textSize">@dimen/font_huge</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+
+    <style name="Button" parent="Base.Widget.AppCompat.Button.Borderless" />
+
+    <style name="Button.Normal">
+        <item name="android:minWidth">10dp</item>
+        <item name="android:minHeight">10dp</item>
+        <item name="android:paddingTop">@dimen/app_normal_margin</item>
+        <item name="android:paddingBottom">@dimen/app_normal_margin</item>
+        <item name="android:clickable">true</item>
+        <item name="android:background">?android:attr/selectableItemBackground</item>
+        <item name="android:textSize">@dimen/font_larger</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+
+    <style name="BottomDialog">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowAnimationStyle">@style/BottomDialog</item>
+        <item name="android:gravity">bottom</item>
+    </style>
+</resources>
