@@ -10,4 +10,16 @@
     <string name="weibo">新浪微博</string>
     <string name="qq">QQ</string>
     <string name="qzone">QQ空间</string>
+
+    <!-- button -->
+    <string name="horizontal_single">横向单行</string>
+    <string name="horizontal_multi">横向多行</string>
+    <string name="vertical">竖向</string>
+
+    <!-- item -->
+    <string name="delete">删除</string>
+    <string name="add_item">添加</string>
+    <string name="source_on_github">Github位置</string>
+    <string name="title_item">功能</string>
+
 </resources>

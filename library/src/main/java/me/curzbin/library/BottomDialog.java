@@ -10,6 +10,7 @@ import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.view.SupportMenuInflater;
 import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.TypedValue;
@@ -27,6 +28,10 @@ import java.util.Collections;
 import java.util.List;
 
 public class BottomDialog {
+
+    public static final int HORIZONTAL = OrientationHelper.HORIZONTAL;
+
+    public static final int VERTICAL = OrientationHelper.VERTICAL;
 
     private CustomDialog customDialog;
 
@@ -51,6 +56,11 @@ public class BottomDialog {
 
     public BottomDialog inflateMenu(int menu) {
         customDialog.inflateMenu(menu);
+        return this;
+    }
+
+    public BottomDialog orientation(int orientation) {
+        customDialog.orientation(orientation);
         return this;
     }
 
@@ -81,8 +91,12 @@ public class BottomDialog {
         private DialogAdapter adapter;
 
         private int padding;
-        private int drawablePadding;
-        private int topIconSize;
+        private int topPadding;
+        private int leftPadding;
+        private int topIcon;
+        private int leftIcon;
+
+        private int orientation;
 
         public CustomDialog(Context context) {
             super(context, R.style.BottomDialog);
@@ -92,8 +106,10 @@ public class BottomDialog {
 
         private void init() {
             padding = getContext().getResources().getDimensionPixelSize(R.dimen.app_normal_margin);
-            drawablePadding = getContext().getResources().getDimensionPixelSize(R.dimen.app_tiny_margin);
-            topIconSize = getContext().getResources().getDimensionPixelSize(R.dimen.bottom_dialog_top_icon);
+            topPadding = getContext().getResources().getDimensionPixelSize(R.dimen.app_tiny_margin);
+            leftPadding = getContext().getResources().getDimensionPixelSize(R.dimen.app_normal_margin);
+            topIcon = getContext().getResources().getDimensionPixelSize(R.dimen.bottom_dialog_top_icon);
+            leftIcon = getContext().getResources().getDimensionPixelSize(R.dimen.bottom_dialog_left_icon);
 
             setContentView(R.layout.bottom_dialog);
             setCancelable(true);
@@ -114,8 +130,8 @@ public class BottomDialog {
 
         public void addItems(List<Item> items) {
             ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            RecyclerView.LayoutManager manager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-            adapter = new DialogAdapter(items);
+            RecyclerView.LayoutManager manager = new LinearLayoutManager(getContext(), orientation, false);
+            adapter = new DialogAdapter(items, orientation);
 
             RecyclerView recyclerView = new RecyclerView(getContext());
             recyclerView.setLayoutParams(params);
@@ -132,6 +148,11 @@ public class BottomDialog {
         public void title(String title) {
             titleView.setText(title);
             titleView.setVisibility(View.VISIBLE);
+        }
+
+        public void orientation(int orientation) {
+            this.orientation = orientation;
+            if (adapter != null) adapter.setOrientation(orientation);
         }
 
         public void background(int res) {
@@ -158,14 +179,20 @@ public class BottomDialog {
             adapter.setItemClick(onItemClickListener);
         }
 
-        private class DialogAdapter extends RecyclerView.Adapter<DialogAdapter.ViewHolder> {
+        /**
+         * recycler view adapter, provide HORIZONTAL and VERTICAL item style
+         */
+        private class DialogAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             private List<Item> mItems = Collections.emptyList();
             private RxBus rxBus;
             private OnItemClickListener itemClickListener;
 
-            public DialogAdapter(List<Item> mItems) {
+            private int orientation;
+
+            public DialogAdapter(List<Item> mItems, int orientation) {
                 setList(mItems);
+                this.orientation = orientation;
             }
 
             private void setList(List<Item> items) {
@@ -180,24 +207,50 @@ public class BottomDialog {
                 this.itemClickListener = onItemClickListener;
             }
 
-            @Override
-            public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-                return new ViewHolder(new LinearLayout(parent.getContext()));
+            public void setOrientation(int orientation) {
+                this.orientation = orientation;
+                notifyDataSetChanged();
             }
 
             @Override
-            public void onBindViewHolder(ViewHolder holder, int position) {
+            public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                if (orientation == HORIZONTAL)
+                    return new HorizontalHolder(new LinearLayout(parent.getContext()));
+                else return new VerticalHolder(new LinearLayout(parent.getContext()));
+            }
+
+            @Override
+            public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
                 final Item item = mItems.get(position);
 
-                holder.item.setText(item.getTitle());
-                holder.item.setCompoundDrawablesWithIntrinsicBounds(null, holder.icon(item.getIcon()), null, null);
-                holder.item.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if (rxBus.hasObservers()) rxBus.send(item);
-                        if (itemClickListener != null) itemClickListener.click(item);
-                    }
-                });
+                HorizontalHolder horizontalHolder;
+                VerticalHolder verticalHolder;
+
+                if (orientation == HORIZONTAL) {
+                    horizontalHolder = (HorizontalHolder) holder;
+
+                    horizontalHolder.item.setText(item.getTitle());
+                    horizontalHolder.item.setCompoundDrawablesWithIntrinsicBounds(null, horizontalHolder.icon(item.getIcon()), null, null);
+                    horizontalHolder.item.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            if (rxBus != null && rxBus.hasObservers()) rxBus.send(item);
+                            if (itemClickListener != null) itemClickListener.click(item);
+                        }
+                    });
+                } else {
+                    verticalHolder = (VerticalHolder) holder;
+
+                    verticalHolder.item.setText(item.getTitle());
+                    verticalHolder.item.setCompoundDrawablesWithIntrinsicBounds(verticalHolder.icon(item.getIcon()), null, null, null);
+                    verticalHolder.item.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            if (rxBus != null && rxBus.hasObservers()) rxBus.send(item);
+                            if (itemClickListener != null) itemClickListener.click(item);
+                        }
+                    });
+                }
             }
 
             @Override
@@ -205,10 +258,13 @@ public class BottomDialog {
                 return mItems.size();
             }
 
-            public class ViewHolder extends RecyclerView.ViewHolder {
+            /**
+             * horizontal item adapter
+             */
+            public class HorizontalHolder extends RecyclerView.ViewHolder {
                 private TextView item;
 
-                public ViewHolder(View view) {
+                public HorizontalHolder(View view) {
                     super(view);
 
                     ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -220,7 +276,7 @@ public class BottomDialog {
                     item.setEllipsize(TextUtils.TruncateAt.END);
                     item.setGravity(Gravity.CENTER);
                     item.setTextColor(ContextCompat.getColor(view.getContext(), R.color.gray_font_dark));
-                    item.setCompoundDrawablePadding(drawablePadding);
+                    item.setCompoundDrawablePadding(topPadding);
                     item.setPadding(0, padding, 0, padding);
 
                     TypedValue typedValue = new TypedValue();
@@ -233,7 +289,44 @@ public class BottomDialog {
                 private Drawable icon(Drawable drawable) {
                     if (drawable != null) {
                         Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
-                        Drawable resizeIcon = new BitmapDrawable(getContext().getResources(), Bitmap.createScaledBitmap(bitmap, topIconSize, topIconSize, true));
+                        @SuppressWarnings("SuspiciousNameCombination") Drawable resizeIcon = new BitmapDrawable(getContext().getResources(), Bitmap.createScaledBitmap(bitmap, topIcon, topIcon, true));
+                        Drawable.ConstantState state = resizeIcon.getConstantState();
+                        resizeIcon = DrawableCompat.wrap(state == null ? resizeIcon : state.newDrawable().mutate());
+                        return resizeIcon;
+                    }
+                    return null;
+                }
+            }
+
+            public class VerticalHolder extends RecyclerView.ViewHolder {
+                private TextView item;
+
+                public VerticalHolder(View view) {
+                    super(view);
+
+                    ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+                    view.setLayoutParams(params);
+                    item = new TextView(view.getContext());
+                    item.setLayoutParams(params);
+                    item.setMaxLines(1);
+                    item.setEllipsize(TextUtils.TruncateAt.END);
+                    item.setGravity(Gravity.CENTER_VERTICAL);
+                    item.setTextColor(ContextCompat.getColor(view.getContext(), R.color.black));
+                    item.setCompoundDrawablePadding(leftPadding);
+                    item.setPadding(padding, padding, padding, padding);
+
+                    TypedValue typedValue = new TypedValue();
+                    view.getContext().getTheme().resolveAttribute(android.R.attr.selectableItemBackground, typedValue, true);
+                    item.setBackgroundResource(typedValue.resourceId);
+
+                    ((LinearLayout) view).addView(item);
+                }
+
+                private Drawable icon(Drawable drawable) {
+                    if (drawable != null) {
+                        Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+                        @SuppressWarnings("SuspiciousNameCombination") Drawable resizeIcon = new BitmapDrawable(getContext().getResources(), Bitmap.createScaledBitmap(bitmap, leftIcon, leftIcon, true));
                         Drawable.ConstantState state = resizeIcon.getConstantState();
                         resizeIcon = DrawableCompat.wrap(state == null ? resizeIcon : state.newDrawable().mutate());
                         return resizeIcon;
