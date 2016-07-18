@@ -1,4 +1,4 @@
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ The MIT License (MIT)
   ~
   ~ Copyright (c) 2016 Raphaël Bussa
@@ -22,21 +22,5 @@
   ~ SOFTWARE.
   -->
 
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:id="@+id/action_social_share"
-        android:icon="@mipmap/ic_action_social_share"
-        android:title="@string/share" />
-    <item
-        android:id="@+id/action_delete"
-        android:icon="@mipmap/ic_action_action_delete"
-        android:title="@string/delete" />
-    <item
-        android:id="@+id/action_content_add"
-        android:icon="@mipmap/ic_action_content_add"
-        android:title="@string/add_item" />
-    <item
-        android:id="@+id/ic_github"
-        android:icon="@mipmap/ic_github"
-        android:title="@string/source_on_github" />
-</menu>
+<decelerateInterpolator xmlns:android="http://schemas.android.com/apk/res/android"
+    android:factor="2.5" />
