@@ -276,6 +276,7 @@ public class BottomDialog {
                     item.setEllipsize(TextUtils.TruncateAt.END);
                     item.setGravity(Gravity.CENTER);
                     item.setTextColor(ContextCompat.getColor(view.getContext(), R.color.gray_font_dark));
+                    item.setTextSize(TypedValue.COMPLEX_UNIT_PX, getContext().getResources().getDimension(R.dimen.font_small));
                     item.setCompoundDrawablePadding(topPadding);
                     item.setPadding(0, padding, 0, padding);
 
@@ -313,6 +314,7 @@ public class BottomDialog {
                     item.setEllipsize(TextUtils.TruncateAt.END);
                     item.setGravity(Gravity.CENTER_VERTICAL);
                     item.setTextColor(ContextCompat.getColor(view.getContext(), R.color.black));
+                    item.setTextSize(TypedValue.COMPLEX_UNIT_PX, getContext().getResources().getDimension(R.dimen.font_normal));
                     item.setCompoundDrawablePadding(leftPadding);
                     item.setPadding(padding, padding, padding, padding);
 

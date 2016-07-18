@@ -21,8 +21,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/app_normal_margin"
-            android:layout_marginLeft="@dimen/app_normal_margin"
-            android:layout_marginRight="@dimen/app_normal_margin"
+            android:layout_marginLeft="@dimen/app_plus_margin"
+            android:layout_marginRight="@dimen/app_plus_margin"
             android:textColor="@color/gray_font_dark"
             android:visibility="gone"
             tools:text="分享到" />
@@ -42,6 +42,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="@dimen/app_plus_margin"
-        android:text="@android:string/cancel" />
+        android:text="@android:string/cancel"
+        android:textSize="@dimen/font_larger" />
 
 </LinearLayout>
