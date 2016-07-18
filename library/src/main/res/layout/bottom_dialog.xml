@@ -37,7 +37,7 @@
 
     <TextView
         android:id="@+id/cancel"
-        style="@style/Button.Normal"
+        style="@style/Button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
