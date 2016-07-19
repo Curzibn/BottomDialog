@@ -15,6 +15,21 @@ BottomDialog 只需要一句代码即可轻松显示底部弹框
             android:icon="@mipmap/ic_share_moments"
             android:title="@string/moments" />
     </menu>
+    
+## 设置 Layout 样式
+
+    new BottomDialog(MainActivity.this)
+        .title(R.string.title_item)             //设置标题
+        .layout(BottomDialog.GRID)              //设置内容layout,默认为线性(LinearLayout)
+        .orientation(BottomDialog.VERTICAL)     //设置滑动方向,默认为横向
+        .inflateMenu(R.menu.menu_share)         //传人菜单内容
+        .itemClick(new OnItemClickListener() {  //设置监听
+            @Override
+            public void click(Item item) {
+                Toast.makeText(MainActivity.this, getString(R.string.share_title) + item.getTitle(), Toast.LENGTH_LONG).show();
+            }
+        })
+        .show();
 
 ## Listener 事件监听方式调用
     new BottomDialog(context)
@@ -45,4 +60,3 @@ BottomDialog 只需要一句代码即可轻松显示底部弹框
         .inflateMenu(R.menu.menu_share)
         .itemClick(rxBus)
         .show();
-    
