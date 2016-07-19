@@ -9,6 +9,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.view.SupportMenuInflater;
 import android.support.v7.view.menu.MenuBuilder;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
@@ -28,10 +29,11 @@ import java.util.Collections;
 import java.util.List;
 
 public class BottomDialog {
-
     public static final int HORIZONTAL = OrientationHelper.HORIZONTAL;
-
     public static final int VERTICAL = OrientationHelper.VERTICAL;
+
+    public static final int LINEAR = 0;
+    public static final int GRID = 1;
 
     private CustomDialog customDialog;
 
@@ -56,6 +58,11 @@ public class BottomDialog {
 
     public BottomDialog inflateMenu(int menu) {
         customDialog.inflateMenu(menu);
+        return this;
+    }
+
+    public BottomDialog layout(int layout) {
+        customDialog.layout(layout);
         return this;
     }
 
@@ -97,6 +104,7 @@ public class BottomDialog {
         private int leftIcon;
 
         private int orientation;
+        private int layout;
 
         public CustomDialog(Context context) {
             super(context, R.style.BottomDialog);
@@ -130,8 +138,14 @@ public class BottomDialog {
 
         public void addItems(List<Item> items) {
             ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            RecyclerView.LayoutManager manager = new LinearLayoutManager(getContext(), orientation, false);
-            adapter = new DialogAdapter(items, orientation);
+            RecyclerView.LayoutManager manager;
+            adapter = new DialogAdapter(items, layout, orientation);
+
+            if (layout == LINEAR)
+                manager = new LinearLayoutManager(getContext(), orientation, false);
+            else if (layout == GRID)
+                manager = new GridLayoutManager(getContext(), 5, orientation, false);
+            else manager = new LinearLayoutManager(getContext(), orientation, false);
 
             RecyclerView recyclerView = new RecyclerView(getContext());
             recyclerView.setLayoutParams(params);
@@ -148,6 +162,11 @@ public class BottomDialog {
         public void title(String title) {
             titleView.setText(title);
             titleView.setVisibility(View.VISIBLE);
+        }
+
+        public void layout(int layout) {
+            this.layout = layout;
+            if (adapter != null) adapter.setLayout(layout);
         }
 
         public void orientation(int orientation) {
@@ -189,9 +208,11 @@ public class BottomDialog {
             private OnItemClickListener itemClickListener;
 
             private int orientation;
+            private int layout;
 
-            public DialogAdapter(List<Item> mItems, int orientation) {
+            public DialogAdapter(List<Item> mItems, int layout, int orientation) {
                 setList(mItems);
+                this.layout = layout;
                 this.orientation = orientation;
             }
 
@@ -212,26 +233,45 @@ public class BottomDialog {
                 notifyDataSetChanged();
             }
 
+            public void setLayout(int layout) {
+                this.layout = layout;
+                notifyDataSetChanged();
+            }
+
             @Override
             public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-                if (orientation == HORIZONTAL)
-                    return new HorizontalHolder(new LinearLayout(parent.getContext()));
-                else return new VerticalHolder(new LinearLayout(parent.getContext()));
+                if (layout == GRID)
+                    return new TopHolder(new LinearLayout(parent.getContext()));
+                else if (orientation == HORIZONTAL)
+                    return new TopHolder(new LinearLayout(parent.getContext()));
+                else return new LeftHolder(new LinearLayout(parent.getContext()));
             }
 
             @Override
             public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
                 final Item item = mItems.get(position);
 
-                HorizontalHolder horizontalHolder;
-                VerticalHolder verticalHolder;
+                TopHolder topHolder;
+                LeftHolder leftHolder;
 
-                if (orientation == HORIZONTAL) {
-                    horizontalHolder = (HorizontalHolder) holder;
+                if (layout == GRID) {
+                    topHolder = (TopHolder) holder;
 
-                    horizontalHolder.item.setText(item.getTitle());
-                    horizontalHolder.item.setCompoundDrawablesWithIntrinsicBounds(null, horizontalHolder.icon(item.getIcon()), null, null);
-                    horizontalHolder.item.setOnClickListener(new View.OnClickListener() {
+                    topHolder.item.setText(item.getTitle());
+                    topHolder.item.setCompoundDrawablesWithIntrinsicBounds(null, topHolder.icon(item.getIcon()), null, null);
+                    topHolder.item.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            if (rxBus != null && rxBus.hasObservers()) rxBus.send(item);
+                            if (itemClickListener != null) itemClickListener.click(item);
+                        }
+                    });
+                } else if (orientation == HORIZONTAL) {
+                    topHolder = (TopHolder) holder;
+
+                    topHolder.item.setText(item.getTitle());
+                    topHolder.item.setCompoundDrawablesWithIntrinsicBounds(null, topHolder.icon(item.getIcon()), null, null);
+                    topHolder.item.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
                             if (rxBus != null && rxBus.hasObservers()) rxBus.send(item);
@@ -239,11 +279,11 @@ public class BottomDialog {
                         }
                     });
                 } else {
-                    verticalHolder = (VerticalHolder) holder;
+                    leftHolder = (LeftHolder) holder;
 
-                    verticalHolder.item.setText(item.getTitle());
-                    verticalHolder.item.setCompoundDrawablesWithIntrinsicBounds(verticalHolder.icon(item.getIcon()), null, null, null);
-                    verticalHolder.item.setOnClickListener(new View.OnClickListener() {
+                    leftHolder.item.setText(item.getTitle());
+                    leftHolder.item.setCompoundDrawablesWithIntrinsicBounds(leftHolder.icon(item.getIcon()), null, null, null);
+                    leftHolder.item.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
                             if (rxBus != null && rxBus.hasObservers()) rxBus.send(item);
@@ -261,10 +301,10 @@ public class BottomDialog {
             /**
              * horizontal item adapter
              */
-            public class HorizontalHolder extends RecyclerView.ViewHolder {
+            public class TopHolder extends RecyclerView.ViewHolder {
                 private TextView item;
 
-                public HorizontalHolder(View view) {
+                public TopHolder(View view) {
                     super(view);
 
                     ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -299,10 +339,10 @@ public class BottomDialog {
                 }
             }
 
-            public class VerticalHolder extends RecyclerView.ViewHolder {
+            public class LeftHolder extends RecyclerView.ViewHolder {
                 private TextView item;
 
-                public VerticalHolder(View view) {
+                public LeftHolder(View view) {
                     super(view);
 
                     ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);

@@ -89,5 +89,24 @@ public class MainActivity extends AppCompatActivity {
                         .show();
             }
         });
+
+        findViewById(R.id.grid).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                new BottomDialog(MainActivity.this)
+                        .title(R.string.title_item)
+                        .layout(BottomDialog.GRID)
+                        .orientation(BottomDialog.VERTICAL)
+                        .inflateMenu(R.menu.menu_share)
+                        .itemClick(new OnItemClickListener() {
+                            @Override
+                            public void click(Item item) {
+                                Toast.makeText(MainActivity.this, getString(R.string.share_title) + item.getTitle(), Toast.LENGTH_LONG).show();
+                            }
+                        })
+                        .show();
+            }
+        });
     }
 }

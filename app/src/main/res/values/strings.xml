@@ -15,6 +15,7 @@
     <string name="horizontal_single">横向单行</string>
     <string name="horizontal_multi">横向多行</string>
     <string name="vertical">竖向</string>
+    <string name="grid">网格</string>
 
     <!-- item -->
     <string name="delete">删除</string>
