@@ -2,7 +2,7 @@
 BottomDialog 一个自定义的从底部弹出的dialog，仿照微博的分享弹框
 
 # 效果图
-![Alt text](/art/demo.gif)![Alt text](/art/horizontal.png)![Alt text](/art/vertical.png)
+![Alt text](/art/horizontal.png)![Alt text](/art/vertical.png)
 
 # 导入
 
