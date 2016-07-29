@@ -76,11 +76,6 @@ public class BottomDialog {
         return this;
     }
 
-    public BottomDialog itemClick(RxBus rxBus) {
-        customDialog.setItemClick(rxBus);
-        return this;
-    }
-
     public BottomDialog itemClick(OnItemClickListener listener) {
         customDialog.setItemClick(listener);
         return this;
@@ -190,10 +185,6 @@ public class BottomDialog {
             addItems(items);
         }
 
-        public void setItemClick(RxBus rxBus) {
-            adapter.setItemClick(rxBus);
-        }
-
         public void setItemClick(OnItemClickListener onItemClickListener) {
             adapter.setItemClick(onItemClickListener);
         }
@@ -204,7 +195,6 @@ public class BottomDialog {
         private class DialogAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             private List<Item> mItems = Collections.emptyList();
-            private RxBus rxBus;
             private OnItemClickListener itemClickListener;
 
             private int orientation;
@@ -218,10 +208,6 @@ public class BottomDialog {
 
             private void setList(List<Item> items) {
                 mItems = items == null ? new ArrayList<Item>() : items;
-            }
-
-            public void setItemClick(RxBus rxBus) {
-                this.rxBus = rxBus;
             }
 
             public void setItemClick(OnItemClickListener onItemClickListener) {
@@ -262,7 +248,6 @@ public class BottomDialog {
                     topHolder.item.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            if (rxBus != null && rxBus.hasObservers()) rxBus.send(item);
                             if (itemClickListener != null) itemClickListener.click(item);
                         }
                     });
@@ -274,7 +259,6 @@ public class BottomDialog {
                     topHolder.item.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            if (rxBus != null && rxBus.hasObservers()) rxBus.send(item);
                             if (itemClickListener != null) itemClickListener.click(item);
                         }
                     });
@@ -286,7 +270,6 @@ public class BottomDialog {
                     leftHolder.item.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            if (rxBus != null && rxBus.hasObservers()) rxBus.send(item);
                             if (itemClickListener != null) itemClickListener.click(item);
                         }
                     });

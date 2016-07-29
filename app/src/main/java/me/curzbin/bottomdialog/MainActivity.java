@@ -10,8 +10,6 @@ import android.widget.Toast;
 import me.curzbin.library.BottomDialog;
 import me.curzbin.library.Item;
 import me.curzbin.library.OnItemClickListener;
-import me.curzbin.library.RxBus;
-import rx.functions.Action1;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -23,16 +21,6 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        final RxBus rxBus = new RxBus();
-
-        rxBus.toObservable()
-                .subscribe(new Action1<Object>() {
-                    @Override
-                    public void call(Object event) {
-                        if (event instanceof Item)
-                            Toast.makeText(MainActivity.this, getString(R.string.share_title) + ((Item) event).getTitle(), Toast.LENGTH_LONG).show();
-                    }
-                });
 
         findViewById(R.id.horizontal_single).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -42,7 +30,6 @@ public class MainActivity extends AppCompatActivity {
                         .title(R.string.share_title)
                         .orientation(BottomDialog.HORIZONTAL)
                         .inflateMenu(R.menu.menu_share)
-                        .itemClick(rxBus)
                         .itemClick(new OnItemClickListener() {
                             @Override
                             public void click(Item item) {
