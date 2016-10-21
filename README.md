@@ -8,7 +8,7 @@ BottomDialog 一个自定义的从底部弹出的dialog，仿照微博的分享�
     compile 'top.zibin:BottomDialog:1.0.5'
 
 #Release Notes
-###(v1.0.5, 2016/10/21)[https://github.com/Curzibn/BottomDialog/milestone/1]
+###[v1.0.5, 2016/10/21](https://github.com/Curzibn/BottomDialog/milestone/1)
 
 - 修改多行显示下只有最后一行点击有相应问题
 
