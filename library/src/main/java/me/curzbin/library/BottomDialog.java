@@ -56,8 +56,8 @@ public class BottomDialog {
         return this;
     }
 
-    public BottomDialog inflateMenu(int menu) {
-        customDialog.inflateMenu(menu);
+    public BottomDialog inflateMenu(int menu, OnItemClickListener onItemClickListener) {
+        customDialog.inflateMenu(menu, onItemClickListener);
         return this;
     }
 
@@ -71,11 +71,14 @@ public class BottomDialog {
         return this;
     }
 
-    public BottomDialog addItems(List<Item> items) {
-        customDialog.addItems(items);
+    public BottomDialog addItems(List<Item> items, OnItemClickListener onItemClickListener) {
+        customDialog.addItems(items, onItemClickListener);
         return this;
     }
 
+    /**
+     * @deprecated
+     */
     public BottomDialog itemClick(OnItemClickListener listener) {
         customDialog.setItemClick(listener);
         return this;
@@ -101,7 +104,7 @@ public class BottomDialog {
         private int orientation;
         private int layout;
 
-        public CustomDialog(Context context) {
+        CustomDialog(Context context) {
             super(context, R.style.BottomDialog);
 
             init();
@@ -131,10 +134,12 @@ public class BottomDialog {
             });
         }
 
-        public void addItems(List<Item> items) {
+        void addItems(List<Item> items, OnItemClickListener onItemClickListener) {
             ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             RecyclerView.LayoutManager manager;
+
             adapter = new DialogAdapter(items, layout, orientation);
+            adapter.setItemClick(onItemClickListener);
 
             if (layout == LINEAR)
                 manager = new LinearLayoutManager(getContext(), orientation, false);
@@ -173,7 +178,7 @@ public class BottomDialog {
             background.setBackgroundResource(res);
         }
 
-        public void inflateMenu(int menu) {
+        void inflateMenu(int menu, OnItemClickListener onItemClickListener) {
             MenuInflater menuInflater = new SupportMenuInflater(getContext());
             MenuBuilder menuBuilder = new MenuBuilder(getContext());
             menuInflater.inflate(menu, menuBuilder);
@@ -182,10 +187,10 @@ public class BottomDialog {
                 MenuItem menuItem = menuBuilder.getItem(i);
                 items.add(new Item(menuItem.getItemId(), menuItem.getTitle().toString(), menuItem.getIcon()));
             }
-            addItems(items);
+            addItems(items, onItemClickListener);
         }
 
-        public void setItemClick(OnItemClickListener onItemClickListener) {
+        void setItemClick(OnItemClickListener onItemClickListener) {
             adapter.setItemClick(onItemClickListener);
         }
 
@@ -200,7 +205,7 @@ public class BottomDialog {
             private int orientation;
             private int layout;
 
-            public DialogAdapter(List<Item> mItems, int layout, int orientation) {
+            DialogAdapter(List<Item> mItems, int layout, int orientation) {
                 setList(mItems);
                 this.layout = layout;
                 this.orientation = orientation;
@@ -210,7 +215,7 @@ public class BottomDialog {
                 mItems = items == null ? new ArrayList<Item>() : items;
             }
 
-            public void setItemClick(OnItemClickListener onItemClickListener) {
+            void setItemClick(OnItemClickListener onItemClickListener) {
                 this.itemClickListener = onItemClickListener;
             }
 
@@ -284,10 +289,10 @@ public class BottomDialog {
             /**
              * horizontal item adapter
              */
-            public class TopHolder extends RecyclerView.ViewHolder {
+            class TopHolder extends RecyclerView.ViewHolder {
                 private TextView item;
 
-                public TopHolder(View view) {
+                TopHolder(View view) {
                     super(view);
 
                     ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -322,10 +327,10 @@ public class BottomDialog {
                 }
             }
 
-            public class LeftHolder extends RecyclerView.ViewHolder {
+            class LeftHolder extends RecyclerView.ViewHolder {
                 private TextView item;
 
-                public LeftHolder(View view) {
+                LeftHolder(View view) {
                     super(view);
 
                     ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);

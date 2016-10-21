@@ -1,7 +1,6 @@
 package me.curzbin.bottomdialog;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -20,8 +19,6 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-
         findViewById(R.id.horizontal_single).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -29,11 +26,10 @@ public class MainActivity extends AppCompatActivity {
                 new BottomDialog(MainActivity.this)
                         .title(R.string.share_title)
                         .orientation(BottomDialog.HORIZONTAL)
-                        .inflateMenu(R.menu.menu_share)
-                        .itemClick(new OnItemClickListener() {
+                        .inflateMenu(R.menu.menu_share, new OnItemClickListener() {
                             @Override
                             public void click(Item item) {
-                                Toast.makeText(MainActivity.this, getString(R.string.share_title) + item.getTitle(), Toast.LENGTH_LONG).show();
+                                Toast.makeText(MainActivity.this, getString(R.string.share_title) + item.getTitle(), Toast.LENGTH_SHORT).show();
                             }
                         })
                         .show();
@@ -47,12 +43,16 @@ public class MainActivity extends AppCompatActivity {
                 new BottomDialog(MainActivity.this)
                         .title(R.string.share_title)
                         .orientation(BottomDialog.HORIZONTAL)
-                        .inflateMenu(R.menu.menu_share)
-                        .inflateMenu(R.menu.menu_main)
-                        .itemClick(new OnItemClickListener() {
+                        .inflateMenu(R.menu.menu_share, new OnItemClickListener() {
                             @Override
                             public void click(Item item) {
-                                Toast.makeText(MainActivity.this, getString(R.string.share_title) + item.getTitle(), Toast.LENGTH_LONG).show();
+                                Toast.makeText(MainActivity.this, getString(R.string.share_title) + item.getTitle(), Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .inflateMenu(R.menu.menu_main, new OnItemClickListener() {
+                            @Override
+                            public void click(Item item) {
+                                Toast.makeText(MainActivity.this, item.getTitle(), Toast.LENGTH_SHORT).show();
                             }
                         })
                         .show();
@@ -66,11 +66,10 @@ public class MainActivity extends AppCompatActivity {
                 new BottomDialog(MainActivity.this)
                         .title(R.string.title_item)
                         .orientation(BottomDialog.VERTICAL)
-                        .inflateMenu(R.menu.menu_share)
-                        .itemClick(new OnItemClickListener() {
+                        .inflateMenu(R.menu.menu_share, new OnItemClickListener() {
                             @Override
                             public void click(Item item) {
-                                Toast.makeText(MainActivity.this, getString(R.string.share_title) + item.getTitle(), Toast.LENGTH_LONG).show();
+                                Toast.makeText(MainActivity.this, getString(R.string.share_title) + item.getTitle(), Toast.LENGTH_SHORT).show();
                             }
                         })
                         .show();
@@ -85,11 +84,10 @@ public class MainActivity extends AppCompatActivity {
                         .title(R.string.title_item)
                         .layout(BottomDialog.GRID)
                         .orientation(BottomDialog.VERTICAL)
-                        .inflateMenu(R.menu.menu_share)
-                        .itemClick(new OnItemClickListener() {
+                        .inflateMenu(R.menu.menu_grid, new OnItemClickListener() {
                             @Override
                             public void click(Item item) {
-                                Toast.makeText(MainActivity.this, getString(R.string.share_title) + item.getTitle(), Toast.LENGTH_LONG).show();
+                                Toast.makeText(MainActivity.this, getString(R.string.share_title) + item.getTitle(), Toast.LENGTH_SHORT).show();
                             }
                         })
                         .show();
